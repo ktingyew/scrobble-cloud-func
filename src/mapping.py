@@ -4,23 +4,34 @@ import pandas as pd
 
 logger = logging.getLogger("main.mapping")
 
-def get_combined_mapped_scrobbles(
+
+def filter_new_scrobbles(
     new: pd.DataFrame,
-    old: pd.DataFrame,
+    date_string: str
+) -> pd.DataFrame :
+    """ Filter DataFrame, keeping only records that are after this date_string
+    """
+    df = new.copy()
+
+    idx: int = df[df['Datetime_n'] == date_string].index.tolist()[0]
+    df = df.iloc[:idx]
+
+    logger.info(f"Number of new scrobbles: {len(df)}")
+
+    return df
+
+
+def map_the_new(
+    new: pd.DataFrame,
     mapper: pd.DataFrame
 ) -> pd.DataFrame :
+    """ Take the new df (of last.fm scrobbles), then map them with mapper.
     """
-    `new` should be filtered already; records that already exist in
-    `old` are removed.
-    """
+    df = new.copy()
 
-    # Filter away records from `new` that alr exists in `old`
-    most_rct_datetime_from_old: str = old.iloc[0]['Datetime_n'] 
-    idx: int = new[new['Datetime_n'] == most_rct_datetime_from_old].index.tolist()[0]
-    new = new.iloc[:idx].copy() # new is thus modified
-
-    for i in range(len(new)):
-        title, artist = new.iloc[i]['Title'], new.iloc[i]['Artist'] 
+    # Process new with mapper
+    for i in range(len(df)):
+        title, artist = new.iloc[i]['Title'], df.iloc[i]['Artist'] 
         # attempt to look for "correct answer" in `mapper` by generating 
         # filtered df
         ans_df = mapper[
@@ -28,14 +39,11 @@ def get_combined_mapped_scrobbles(
             & (mapper['Title_s'] == title)
         ] 
         if len(ans_df) == 1: # there is an answer
-            new.at[i, 'Title_c'] = ans_df.values.tolist()[0][2]
-            new.at[i, 'Artist_c'] = ans_df.values.tolist()[0][3]
+            df.at[i, 'Title_c'] = ans_df.values.tolist()[0][2]
+            df.at[i, 'Artist_c'] = ans_df.values.tolist()[0][3]
         else: # we populate the field with easy to find tags
-            new.at[i, 'Title_c'] = "XXxXX"
-            new.at[i, 'Artist_c'] =  "XXxXX" 
+            df.at[i, 'Title_c'] = "XXxXX"
+            df.at[i, 'Artist_c'] =  "XXxXX" 
+            logger.warning(f"Mapper failed to map raw Scrobble: \n{new.iloc[i]}")
 
-    # Concatenate new on top of old
-    out = pd.concat([new, old], ignore_index=True)
-    logger.debug(f"Size of out dataframe is {len(out)}")
-
-    return out
+    return df

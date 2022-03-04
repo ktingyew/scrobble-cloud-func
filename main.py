@@ -1,15 +1,21 @@
+from datetime import datetime
 import logging
 import sys
+
+from pytz import timezone
 
 logger = logging.getLogger("main")
 logger.setLevel(logging.DEBUG)
 fmtter = logging.Formatter(
-    "[%(asctime)s]| %(levelname)8s| %(name)20s| %(message)s", 
-    "%Y-%m-%d %H:%M:%S")
+    fmt="%(asctime)s| %(levelname)8s| %(name)15s| %(message)s", 
+    datefmt="%Y-%m-%d %H:%M:%S")
+fmtter.converter = lambda *args: datetime.now(tz=timezone('Asia/Singapore')).timetuple()
 stdout_handler = logging.StreamHandler(sys.stdout)
 stdout_handler.setFormatter(fmtter)
 stdout_handler.setLevel(logging.DEBUG)
 logger.addHandler(stdout_handler)
+
+BIGQUERY_COLUMN_NAMES = ['Title', 'Artist', 'Album', 'Datetime', 'Title_c', 'Artist_c', 'Datetime_n']
 
 def main(data, context):
 
@@ -18,43 +24,40 @@ def main(data, context):
 
     # Import from my modules
     from src.lastfm import get_df
-    from src.gcs import (
-        upload_to_bucket, 
-        load_mapper_as_df_from_bucket,
-        load_old_scrobbles_as_df_from_bucket
-    )
-    from src.bq import upload_to_bq
-    from src.mapping import get_combined_mapped_scrobbles
-
-    # Read df from last.fm API
-    new = get_df()
-
-    # Download latest scrobble from bucket, and load as df
-    old = load_old_scrobbles_as_df_from_bucket()
+    from src.gcs import load_mapper_as_df_from_bucket
+    from src.bq import get_latest_date, append_to_bq
+    from src.mapping import map_the_new, filter_new_scrobbles
 
     # Download mapper.csv from bucket, and load as df
     mapper = load_mapper_as_df_from_bucket()
 
-    # Get combined df
-    out = get_combined_mapped_scrobbles(new=new, old=old, mapper=mapper)
+    # Get latest date from bq
+    r: str = get_latest_date()
 
-    # Only update/upload to Cloud if there new scrobbles (avoid waste network)
-    if len(out) > len(old):
+    # Read df from last.fm API
+    new = get_df(pages=1)
 
-        # Save to temporary location, staging for uploading to GCS and BQ
-        df_out_path: str = f"/tmp/scrobbles.jsonl"
-        out.to_json(df_out_path, force_ascii=False, orient='records', lines=True)
+    # Filter new down to only contain new scrobbles not alr in bq
+    new = filter_new_scrobbles(new, r)
 
-        # Upload to GCS
-        upload_to_bucket(df_out_path)
+    # Process new with mapper
+    append = map_the_new(new, mapper)
 
-        # Upload to BQ
-        upload_to_bq(out)
+    # Upload to bq if there are one or more records
+    if len(append) >= 1:
+
+        # Reorder `append`'s order of columns to match exactly that of bq's
+        append = append[BIGQUERY_COLUMN_NAMES]
+
+        # Append to table in bq
+        append_to_bq(append)
+
     else:
-        logger.info("Nothing new to update. No uploading to GCS or BQ performed")
+        logger.info(f"No new songs scrobbled since date_string={r}")
 
-    logger.info("Function completed")
+    logger.info("Scrobble Update Cycle Completed")
 
 if __name__ == "__main__":
 
     main('data', 'context')
+

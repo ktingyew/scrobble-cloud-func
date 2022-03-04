@@ -16,9 +16,9 @@ LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
 logger = logging.getLogger("main.lastfm")
 
 
-def get_df():
+def get_df(pages: int = int(PAGE_RETRIEVE_COUNT)):
 
-    pages = list(range(1, int(PAGE_RETRIEVE_COUNT)+1))
+    pages = list(range(1, pages+1))
     page_ls = []
     for p in pages: 
         payload = {
@@ -79,23 +79,7 @@ def get_df():
     )
     df['Datetime_n'] = df['Datetime'].apply(dt_formatter)
 
-    logger.debug(f"Latest scrobble retrieved: {df.iloc[0].to_dict()}")
-
+    logger.debug(f"Latest scrobble retrieved from last.fm: {df.iloc[0].to_dict()}")
 
     return df
-
-# %%
-
-# Get current datetime
-# dt_now_str : str = datetime.now().strftime("%Y-%m-%d %H-%M-%S") # SQL Datetime format
-
-# filename = f"{dt_now_str} scrobble.jsonl"
-# savepath = Path("/") / filename
-
-# with open(savepath, 'w', encoding='utf-8') as fh:
-#     new.to_json(fh, force_ascii=False, orient='records', lines=True) 
-#     logger.info(
-#         f"Scrobble: Successfully saved (n={len(new)}): {savepath}")
-
-# %%
 
