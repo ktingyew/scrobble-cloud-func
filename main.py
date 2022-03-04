@@ -15,8 +15,6 @@ stdout_handler.setFormatter(fmtter)
 stdout_handler.setLevel(logging.DEBUG)
 logger.addHandler(stdout_handler)
 
-BIGQUERY_COLUMN_NAMES = ['Title', 'Artist', 'Album', 'Datetime', 'Title_c', 'Artist_c', 'Datetime_n']
-
 def main(data, context):
 
     # Log context 
@@ -45,9 +43,6 @@ def main(data, context):
 
     # Upload to bq if there are one or more records
     if len(append) >= 1:
-
-        # Reorder `append`'s order of columns to match exactly that of bq's
-        append = append[BIGQUERY_COLUMN_NAMES]
 
         # Append to table in bq
         append_to_bq(append)

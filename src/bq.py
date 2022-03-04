@@ -45,17 +45,16 @@ def get_latest_date(
     return dt_str
 
 
-def append_to_bq(df: pd.DataFrame) -> None :
+def append_to_bq(df: pd.DataFrame) -> None:
 
-    df['Datetime_n'] = pd.to_datetime(df['Datetime_n']) 
+    BIGQUERY_COLUMN_NAMES = ['Title', 'Artist', 'Album', 'Datetime', 'Title_c', 'Artist_c', 'Datetime_n']
 
-    lss = bq_client.insert_rows_from_dataframe(
-        TABLE_REF_STR, 
-        df,
-        selected_fields=schema,
-    )
+    # Reorder `append`'s order of columns to match exactly that of bq's
+    df = df[BIGQUERY_COLUMN_NAMES]
 
-    if lss != [[]]:
-        logger.warning(f"Append to BigQuery has an error: {lss}")
-    else:
-        logger.info(f"insert_rows_from_dataframe to {tbl} successful")
+    # Convert col type to one that is compatible with bq
+    df['Datetime_n'] = pd.to_datetime(df['Datetime_n'])
+
+    bq_client.load_table_from_dataframe(df, TABLE_REF_STR)
+    logger.info(f"Successfully appended to {TABLE_REF_STR}")
+
