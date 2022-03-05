@@ -1,28 +1,20 @@
-# Imports the Google Cloud client library
 import logging
+import os
 from pathlib import Path
 import pathlib
-
-import pandas as pd
 
 from google.cloud import storage
 from google.cloud.storage.bucket import Bucket
 from google.cloud.storage.blob import Blob
+import pandas as pd
 
-# GCS_TARGET = Path(os.environ['GCS_TARGET'])
+gcs_client = storage.Client()
+
+BUCKET_NAME = os.environ['BUCKET_NAME']
+
+my_bucket: Bucket = gcs_client.get_bucket(BUCKET_NAME)
 
 logger = logging.getLogger("main.gcs")
-
-# Instantiates a client
-# credentials = service_account.Credentials.from_service_account_file(GCS_TARGET)
-# gcs_client = storage.Client(credentials=credentials)
-gcs_client = storage.Client()
-logger.info("GCS. Successfully authenticated")
-
-# The name for the new bucket
-bucket_name = "scrobbles-python"
-
-my_bucket: Bucket = gcs_client.get_bucket(bucket_name)
 
 def load_mapper_as_df_from_bucket():
     # Download mapper.csv from bucket and store in /tmp

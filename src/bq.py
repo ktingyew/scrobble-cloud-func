@@ -3,17 +3,13 @@ import pandas as pd
 import os
 from google.cloud import bigquery as bq
 
+bq_client = bq.Client()
+
 PROJECT_ID = os.environ['PROJECT_ID']
 DATASET_ID = os.environ['DATASET_ID']
 TABLE_ID = os.environ['TABLE_ID']
 
 TABLE_REF_STR: str = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}"
-
-logger = logging.getLogger("main.bq")
-logger.debug(TABLE_REF_STR)
-
-bq_client = bq.Client()
-logger.info(f"BigQuery. Successfully authenticated")
 
 fields = "Title:STRING,Artist:STRING,Album:STRING,Datetime:STRING," + \
     "Title_c:STRING,Artist_c:STRING,Datetime_n:DATETIME"
@@ -30,6 +26,9 @@ schema = [
 # initialise table with schema using its (tbl) ref
 tbl = bq.Table(TABLE_REF_STR, schema=schema) 
 
+# Logging
+logger = logging.getLogger("main.bq")
+logger.debug(TABLE_REF_STR)
 
 def get_latest_date(
 ) -> str :

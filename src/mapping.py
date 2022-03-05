@@ -4,7 +4,6 @@ import pandas as pd
 
 logger = logging.getLogger("main.mapping")
 
-
 def filter_new_scrobbles(
     new: pd.DataFrame,
     date_string: str

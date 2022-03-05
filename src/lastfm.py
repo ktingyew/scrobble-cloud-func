@@ -1,10 +1,7 @@
-#%%
-
 from datetime import datetime, timedelta
 import logging
 from collections import namedtuple
 import os
-from pathlib import Path
 
 import pandas as pd
 import requests
@@ -14,7 +11,6 @@ LASTFM_USERNAME = os.environ['LASTFM_USERNAME']
 LASTFM_API_KEY = os.environ['LASTFM_API_KEY']
 
 logger = logging.getLogger("main.lastfm")
-
 
 def get_df(pages: int = int(PAGE_RETRIEVE_COUNT)):
 

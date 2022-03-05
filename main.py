@@ -1,30 +1,22 @@
-from datetime import datetime
-import logging
-import sys
+import logging.config
 
-from pytz import timezone
+from src.mylog import myFormatter # Needed for logging.config.fileConfig
+from src.lastfm import get_df
+from src.gcs import load_mapper_as_df_from_bucket
+from src.bq import get_latest_date, append_to_bq
+from src.mapping import map_the_new, filter_new_scrobbles
 
+# Logging configuration using file
+logging.config.fileConfig(
+    fname="logging.ini",
+    disable_existing_loggers=True    
+)
 logger = logging.getLogger("main")
-logger.setLevel(logging.DEBUG)
-fmtter = logging.Formatter(
-    fmt="%(asctime)s| %(levelname)8s| %(name)15s| %(message)s", 
-    datefmt="%Y-%m-%d %H:%M:%S")
-fmtter.converter = lambda *args: datetime.now(tz=timezone('Asia/Singapore')).timetuple()
-stdout_handler = logging.StreamHandler(sys.stdout)
-stdout_handler.setFormatter(fmtter)
-stdout_handler.setLevel(logging.DEBUG)
-logger.addHandler(stdout_handler)
 
 def main(data, context):
 
     # Log context 
     logger.debug(context)
-
-    # Import from my modules
-    from src.lastfm import get_df
-    from src.gcs import load_mapper_as_df_from_bucket
-    from src.bq import get_latest_date, append_to_bq
-    from src.mapping import map_the_new, filter_new_scrobbles
 
     # Download mapper.csv from bucket, and load as df
     mapper = load_mapper_as_df_from_bucket()
