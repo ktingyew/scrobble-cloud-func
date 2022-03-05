@@ -54,6 +54,10 @@ def append_to_bq(df: pd.DataFrame) -> None:
     # Convert col type to one that is compatible with bq
     df['Datetime_n'] = pd.to_datetime(df['Datetime_n'])
 
-    bq_client.load_table_from_dataframe(df, TABLE_REF_STR)
+    bq_client.load_table_from_dataframe(
+        dataframe=df, 
+        destination=TABLE_REF_STR,
+        job_config=bq.job.LoadJobConfig(write_disposition="WRITE_APPEND")
+    )
     logger.info(f"Successfully appended to {TABLE_REF_STR}")
 
