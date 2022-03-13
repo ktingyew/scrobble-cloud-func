@@ -52,7 +52,7 @@ def append_to_bq(df: pd.DataFrame) -> None:
     df = df[BIGQUERY_COLUMN_NAMES]
 
     # Convert col type to one that is compatible with bq
-    df['Datetime_n'] = pd.to_datetime(df['Datetime_n'])
+    df['Datetime_n'] = pd.to_datetime(df['Datetime_n'], format="%Y-%m-%d %H:%M:%S")
 
     bq_client.load_table_from_dataframe(
         dataframe=df, 
