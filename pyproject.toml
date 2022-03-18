@@ -1,0 +1,6 @@
+[tool.mypy]
+# this should be correct. Modules from src are imported properly to main.py
+files = ["main.py", "./src/*.py"]
+ignore_missing_imports = true
+namespace_packages = true
+explicit_package_bases = true

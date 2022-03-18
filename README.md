@@ -5,6 +5,10 @@ This code reads from my last.fm scrobbles, then processes them, then uploads to 
 
 Since it uses [GCP](https://cloud.google.com/) resources, you need a service account that is authorised to access the aforementioned resources.
 
+# Local Dev
+
+TODO
+
 # Hosting
 
 This code is designed to be hosted on [Cloud Functions](https://cloud.google.com/functions). 
