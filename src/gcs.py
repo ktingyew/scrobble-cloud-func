@@ -1,3 +1,4 @@
+"""Module containing helper function relating to Google Cloud Storage"""
 import logging
 import pathlib
 from pathlib import Path

@@ -3,4 +3,6 @@ deploy.zip: $(shell find src/*.py -type f) main.py requirements.txt
 		-x .\* \
 		-x \*__pycache__\* \
 		-x \*.env \
-		-x Makefile 
+		-x Makefile \
+		-x pyproject.toml \
+		-x setup.cfg

@@ -1,3 +1,4 @@
+"""Entry point of script."""
 from datetime import datetime
 import logging.config
 import os
@@ -43,9 +44,6 @@ def main(data, context) -> None:
     # Log context
     logger.debug(context)
 
-    # Download mapper.csv from bucket, and load as df
-    mapper: pd.DataFrame = load_mapper_as_df_from_bucket(bucket_name=BUCKET_NAME)
-
     # Get latest date from bq
     r: str = get_latest_date(TABLE_REF_STR)
 
@@ -59,11 +57,14 @@ def main(data, context) -> None:
     # Filter new down to only contain new scrobbles not alr in bq
     new: pd.DataFrame = filter_lastfm_scrobbles(lastfm_df, r)
 
-    # Process new with mapper
-    append: pd.DataFrame = map_the_new(new, mapper)
-
     # Upload to bq if there are one or more records
-    if len(append) >= 1:
+    if len(new) >= 1:
+
+        # Download mapper.csv from bucket, and load as df
+        mapper: pd.DataFrame = load_mapper_as_df_from_bucket(bucket_name=BUCKET_NAME)
+
+        # Process new with mapper
+        append: pd.DataFrame = map_the_new(new, mapper)
 
         # Append to table in bq
         append_to_bq(table_ref_str=TABLE_REF_STR, df=append)

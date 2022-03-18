@@ -1,33 +1,8 @@
-"""BigQuery module."""
+"""BigQuery module"""
 import logging
 
 import pandas as pd
 from google.cloud import bigquery as bq
-
-# bq_client = bq.Client()
-
-# PROJECT_ID = os.environ["PROJECT_ID"]
-# DATASET_ID = os.environ["DATASET_ID"]
-# TABLE_ID = os.environ["TABLE_ID"]
-
-# TABLE_REF_STR: str = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}"
-
-# fields = (
-#     "Title:STRING,Artist:STRING,Album:STRING,Datetime:STRING,"
-#     + "Title_c:STRING,Artist_c:STRING,Datetime_n:DATETIME"
-# )
-
-# schema = [
-#     bq.SchemaField(
-#         name=f.split(':')[0],
-#         field_type=f.split(':')[1],
-#         mode='NULLABLE'
-#     )
-#     for f in fields.split(',')
-# ]
-
-# # initialise table with schema using its (tbl) ref
-# tbl = bq.Table(TABLE_REF_STR, schema=schema)
 
 # Logging
 logger = logging.getLogger("main.bq")

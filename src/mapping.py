@@ -1,3 +1,4 @@
+"""Module concerning mapping raw last.fm DataFrame's values to my defined tags."""
 import logging
 
 import pandas as pd
@@ -6,7 +7,7 @@ logger = logging.getLogger("main.mapping")
 
 
 def filter_lastfm_scrobbles(new: pd.DataFrame, date_string: str) -> pd.DataFrame:
-    """Filter DataFrame, keeping only records that are after this date_string"""
+    """Filter DataFrame, keeping only records that are after this date_string."""
     df: pd.DataFrame = new.copy()
 
     idx: int = df[df["Datetime_n"] == date_string].index.tolist()[0]

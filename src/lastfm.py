@@ -1,3 +1,4 @@
+"""Module to read scrobbles to DataFrame using last.fm API"""
 from collections import namedtuple
 from datetime import datetime, timedelta
 import logging
@@ -5,10 +6,6 @@ from typing import Dict, List
 
 import pandas as pd
 import requests
-
-# PAGE_RETRIEVE_COUNT = os.environ["PAGE_RETRIEVE_COUNT"]
-# LASTFM_USERNAME = os.environ["LASTFM_USERNAME"]
-# LASTFM_API_KEY = os.environ["LASTFM_API_KEY"]
 
 logger = logging.getLogger("main.lastfm")
 
