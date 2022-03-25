@@ -1,0 +1,17 @@
+# Need for test in GitHub Actions
+flake8==4.0.1
+flake8-docstrings==1.6.0
+flake8-bugbear==22.1.11
+mypy==0.941
+pytest==7.1.1
+pytest-cov==3.0.0
+tox==3.24.5
+types-requests==2.27.12
+types-pytz==2021.3.5
+# Application
+google-cloud-bigquery==2.32.0
+google-cloud-storage==2.1.0
+pandas==1.4.1
+pyarrow==6.0.1
+pytz==2021.3
+requests==2.27.1

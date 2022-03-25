@@ -1,0 +1,39 @@
+name: My Lousy Test
+on: [push]
+
+jobs:
+  check-bats-version:
+    permissions:
+      id-token: write
+      contents: read
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - id: auth
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.3.1'
+        with:
+          create_credentials_file: true
+          workload_identity_provider: 'projects/570315564617/locations/global/workloadIdentityPools/my-github-actions/providers/github-provider'
+          service_account: 'scrobble-cfunc@music-sql.iam.gserviceaccount.com'
+
+      - name: Echo Google Credentials
+        run: echo $GOOGLE_APPLICATION_CREDENTIALS
+
+      - name: Cat the Credentials
+        run: cat $GOOGLE_APPLICATION_CREDENTIALS
+
+      - name: Echo GITHUB_WORKSPACE
+        run: echo $GITHUB_WORKSPACE
+
+      - name: List this GITHUB_WORKSPACE
+        run: ls $GITHUB_WORKSPACE -la
+      
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      
+      - name: Completed running some echos
+        run: echo "completed running my tests"
+

@@ -1,5 +1,6 @@
-
 # scrobble-cloud-func
+
+![Tests](https://github.com/ktingyew/private_cloud_fn/actions/workflows/piptest.yml/badge.svg)
 
 This code reads from my last.fm scrobbles, then processes them, then uploads to BigQuery and Cloud Storage.
 

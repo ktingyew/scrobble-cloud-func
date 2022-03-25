@@ -1,4 +1,4 @@
-"""BigQuery module"""
+"""BigQuery module."""
 import logging
 
 import pandas as pd

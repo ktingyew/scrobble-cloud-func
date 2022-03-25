@@ -1,6 +1,15 @@
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+
 [tool.mypy]
 # this should be correct. Modules from src are imported properly to main.py
-files = ["main.py", "./src/*.py"]
+files = ["main.py", "./src/my_scrobble/*.py"]
 ignore_missing_imports = true
 namespace_packages = true
 explicit_package_bases = true
+
+[tool.pytest.ini_options]
+addopts = "--cov=my_scrobble"
+minversion = "6.0"
+testpaths = ["tests"]

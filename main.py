@@ -6,10 +6,10 @@ import os
 import pandas as pd
 from pytz import timezone
 
-from src.bq import get_latest_date, append_to_bq
-from src.gcs import load_mapper_as_df_from_bucket
-from src.lastfm import get_df_lastfm
-from src.mapping import map_the_new, filter_lastfm_scrobbles
+from src.my_scrobble.bq import get_latest_date, append_to_bq
+from src.my_scrobble.gcs import load_mapper_as_df_from_bucket
+from src.my_scrobble.lastfm import get_df_lastfm
+from src.my_scrobble.mapping import map_the_new, filter_lastfm_scrobbles
 
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 
@@ -18,7 +18,7 @@ DATASET_ID = os.environ["DATASET_ID"]
 TABLE_ID = os.environ["TABLE_ID"]
 TABLE_REF_STR: str = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}"
 
-PAGE_RETRIEVE_COUNT: str = os.environ["PAGE_RETRIEVE_COUNT"]
+SCROBBLE_RETRIEVE_COUNT: str = os.environ["SCROBBLE_RETRIEVE_COUNT"]
 LASTFM_USERNAME = os.environ["LASTFM_USERNAME"]
 LASTFM_API_KEY = os.environ["LASTFM_API_KEY"]
 
@@ -51,7 +51,7 @@ def main(data, context) -> None:
     lastfm_df: pd.DataFrame = get_df_lastfm(
         lastfm_username=LASTFM_USERNAME,
         last_apikey=LASTFM_API_KEY,
-        page_num=int(PAGE_RETRIEVE_COUNT),
+        num_scrobs=int(SCROBBLE_RETRIEVE_COUNT),
     )
 
     # Filter new down to only contain new scrobbles not alr in bq
