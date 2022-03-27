@@ -1,10 +1,12 @@
+# Cache and dev-related tools
 __pycache__
 .pytest_cache
 .tox
 .coverage
-
 .devcontainer
 .vscode
-deploy.zip
+# Deployment
+Deployment
+
 
 src/my_scrobble.egg-info
